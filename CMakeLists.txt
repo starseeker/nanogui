@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.12)
 
 project(nanogui)
 
@@ -151,6 +151,7 @@ if (NANOGUI_BACKEND MATCHES "(OpenGL|GLES 2|GLES 3)")
 endif()
 
 if (NANOGUI_BACKEND STREQUAL "OpenGL")
+  find_package(OpenGL)
   list(APPEND NANOGUI_EXTRA_DEFS -DNANOGUI_USE_OPENGL)
   list(APPEND NANOGUI_EXTRA_GLOB "resources/*.gl")
   message(STATUS "NanoGUI: using OpenGL backend.")
@@ -354,12 +355,11 @@ elseif (APPLE)
 
   if (NANOGUI_BACKEND STREQUAL "OpenGL")
     find_library(corevideo_library CoreVideo)
-    find_library(opengl_library OpenGL)
 
     # Disable OpenGL deprecation warnings
     add_definitions(-DGL_SILENCE_DEPRECATION)
-    list(APPEND NANOGUI_EXTRA_LIBS ${opengl_library} ${corevideo_library})
-    mark_as_advanced(opengl_library corevideo_library)
+    list(APPEND NANOGUI_EXTRA_LIBS ${OPENGL_LIBRARIES} ${corevideo_library})
+    mark_as_advanced(OPENGL_LIBRARIES corevideo_library)
   else()
     find_library(metal_library Metal)
     find_library(quartzcore_library QuartzCore)
@@ -583,7 +583,7 @@ if (NANOGUI_BUILD_EXAMPLES)
 
   target_link_libraries(example1      nanogui)
   target_link_libraries(example2      nanogui)
-  target_link_libraries(example3      nanogui ${opengl_library})
+  target_link_libraries(example3      nanogui ${OPENGL_LIBRARIES})
   target_link_libraries(example4      nanogui)
   target_link_libraries(example_icons nanogui)
 
